@@ -1,15 +1,14 @@
 // --- CONSTANTS ---
 const APP_TITLE = "Invincible: Faille de Sécurité";
-const FOLDER_NAME = "pages/";
 
 const PAGE_PATHS = {
-  LOGIN: `${FOLDER_NAME}index.html`,
-  GDA_HQ: `${FOLDER_NAME}gda-hq.html`,
-  VILTRUMITE_TERMINAL: `${FOLDER_NAME}viltrumite-terminal.html`,
-  ROBOT_WORKSHOP: `${FOLDER_NAME}robot-workshop.html`,
-  AMBER_MESSAGE: `${FOLDER_NAME}amber-message.html`,
-  SEQUID_ARCHIVES: `${FOLDER_NAME}sequid-archives.html`,
-  VICTORY: `${FOLDER_NAME}victory.html`
+  LOGIN: "/index.html", // Chemin absolu depuis la racine
+  GDA_HQ: "/pages/gda-hq.html", // Chemin absolu
+  VILTRUMITE_TERMINAL: "/pages/viltrumite-terminal.html", // Chemin absolu
+  ROBOT_WORKSHOP: "/pages/robot-workshop.html", // Chemin absolu
+  AMBER_MESSAGE: "/pages/amber-message.html", // Chemin absolu
+  SEQUID_ARCHIVES: "/pages/sequid-archives.html", // Chemin absolu
+  VICTORY: "/pages/victory.html" // Chemin absolu
 };
 
 const ERROR_MESSAGES = {
@@ -32,7 +31,7 @@ const VulnerabilityType = {
   IDOR_SIMULATION: "Accès à une ressource par devinette/manipulation d'ID (IDOR simulé)",
 };
 
-const HIDDEN_GDA_PATH = "/terminal-viltrumite";
+const HIDDEN_GDA_PATH = "/terminal-viltrumite"; // Ceci est une partie de chemin, pas une URL complète
 const ROBOT_CONTINGENCY_CODE = "plan_contingence_zeta";
 const CORRECT_SEQUID_REPORT_ID = "rapport_conscience_collective_sequid";
 
@@ -116,6 +115,8 @@ function initGdaHqPage() {
   console.log("Système de navigation du QG de la GDA chargé. Certaines informations sont classifiées.");
   const hiddenPathContainer = document.getElementById('hidden-path-container');
    if (hiddenPathContainer) {
+     // HIDDEN_GDA_PATH est la partie du chemin, pas l'URL complète de la page cible.
+     // La valeur affichée ici est juste pour l'indice, la validation se fait sur le chemin entré.
      hiddenPathContainer.textContent = `Accès secret au prochain niveau : ${HIDDEN_GDA_PATH}`;
    }
 
@@ -126,7 +127,8 @@ function initGdaHqPage() {
       clearError('error-message');
       const pathInput = event.target.pathInput.value;
 
-      if (pathInput === HIDDEN_GDA_PATH) {
+      // On compare la saisie de l'utilisateur avec la constante HIDDEN_GDA_PATH
+      if (pathInput === HIDDEN_GDA_PATH) { 
         if (!isVulnerabilityDiscovered("Quartier Général de la GDA", VulnerabilityType.CSS_HIDDEN)) {
           addDiscoveredVulnerability({
             pageName: "Quartier Général de la GDA",
@@ -135,6 +137,7 @@ function initGdaHqPage() {
             howToFind: "Utiliser les outils de développement (Inspecter l'élément) pour trouver des éléments cachés par CSS (ex: display:none, position absolute hors écran, couleur identique au fond)."
           });
         }
+        // On utilise PAGE_PATHS pour la navigation
         navigateTo(PAGE_PATHS.VILTRUMITE_TERMINAL);
       } else {
         displayError('error-message', ERROR_MESSAGES.GDA_PATH_INCORRECT);
@@ -163,7 +166,7 @@ function initGdaHqPage() {
 function initViltrumiteTerminalPage() {
   console.log("Terminal Viltrumite en ligne. Attente d'authentification. Seuls les Viltrumites purs peuvent accéder.");
   const terminalForm = document.getElementById('terminal-form');
-  const correctPassword = "force";
+  const correctPassword = "force"; 
 
   if (terminalForm) {
     terminalForm.addEventListener('submit', function(event) {
@@ -180,7 +183,7 @@ function initViltrumiteTerminalPage() {
             howToFind: "Utiliser les indices des pages précédentes (console.log) ou des messages sur la page actuelle pour deviner un mot de passe thématique et commun."
           });
         }
-        navigateTo(PAGE_PATHS.ROBOT_WORKSHOP); // Modifié pour aller à l'atelier de Robot
+        navigateTo(PAGE_PATHS.ROBOT_WORKSHOP);
       } else {
         displayError('error-message', ERROR_MESSAGES.TERMINAL_ACCESS_DENIED);
       }
@@ -188,12 +191,10 @@ function initViltrumiteTerminalPage() {
   }
 }
 
-// NOUVELLE PAGE : Atelier de Robot
 function initRobotWorkshopPage() {
   console.log("Atelier de Robot: Systèmes en ligne. Interface de contrôle des protocoles accessible.");
-  clearError('error-message'); // Clear any previous error message that might persist if user navigates back
+  clearError('error-message'); 
 
-  // Rendre l'objet et la fonction accessibles globalement pour la console
   window.robotControle = {
     activerSequence: function(code) {
       clearError('error-message');
@@ -245,7 +246,7 @@ function initAmberMessagePage() {
             howToFind: "Lire attentivement les messages et le contexte pour déduire une information ou un mot-clé qui n'est pas explicitement donné, mais suggéré."
           });
         }
-        navigateTo(PAGE_PATHS.SEQUID_ARCHIVES); // Modifié pour aller aux archives Sequid
+        navigateTo(PAGE_PATHS.SEQUID_ARCHIVES);
       } else {
         displayError('error-message', ERROR_MESSAGES.SOCIAL_ENGINEERING_FAIL);
       }
@@ -253,11 +254,10 @@ function initAmberMessagePage() {
   }
 }
 
-// NOUVELLE PAGE : Archives Sequid
 function initSequidArchivesPage() {
   console.log("Archives Sequid: Accès à la base de données. Recherche de rapport en cours.");
   const archiveForm = document.getElementById('archive-form');
-
+  
   if (archiveForm) {
     archiveForm.addEventListener('submit', function(event) {
       event.preventDefault();
@@ -288,9 +288,7 @@ function initVictoryPage() {
 
   if (vulnerabilitiesList) {
     if (discovered.length > 0) {
-      // Trier les vulnérabilités pour un affichage cohérent si nécessaire
-      // Pour l'instant, elles s'affichent dans l'ordre de découverte
-      vulnerabilitiesList.innerHTML = ''; // Clear previous list items
+      vulnerabilitiesList.innerHTML = ''; 
       discovered.forEach(vuln => {
         const listItem = document.createElement('li');
         listItem.innerHTML = `
@@ -319,13 +317,11 @@ function initVictoryPage() {
 
 // --- GLOBAL INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
-  // Set current year in footer
   const yearSpan = document.getElementById('current-year');
   if (yearSpan) {
     yearSpan.textContent = new Date().getFullYear();
   }
 
-  // Page specific initializations
   const bodyId = document.body.id;
   console.log(`Initializing page with body ID: ${bodyId}`);
 
@@ -335,11 +331,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initGdaHqPage();
   } else if (bodyId === 'viltrumite-terminal-page') {
     initViltrumiteTerminalPage();
-  } else if (bodyId === 'robot-workshop-page') {
+  } else if (bodyId === 'robot-workshop-page') { 
     initRobotWorkshopPage();
   } else if (bodyId === 'amber-message-page') {
     initAmberMessagePage();
-  } else if (bodyId === 'sequid-archives-page') {
+  } else if (bodyId === 'sequid-archives-page') { 
     initSequidArchivesPage();
   } else if (bodyId === 'victory-page') {
     initVictoryPage();
